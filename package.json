@@ -1,0 +1,24 @@
+{
+  "name": "image-processing",
+  "version": "0.0.3",
+  "description": "Image processing",
+  "scripts": {
+    "images": "yarn gulp img",
+    "favicon": "npx favicons-compiled-cli -i ./images/favicon/favicon.png -c favicon.config.js -o processed/favicon/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fuelviews/image-processing.git"
+  },
+  "author": "@SkyJebus",
+  "license": "MIT",
+  "homepage": "https://github.com/fuelviews/imageprocessing#readme",
+  "devDependencies": {
+
+    "gulp": "^4.0.2",
+    "gulp-sharp-responsive": "^0.3.0",
+    "sharp": "^0.30.0",
+    "yarn-audit-fix": "^9.0.10",
+    "gulp-rename": "^2.0.0"
+  }
+}
