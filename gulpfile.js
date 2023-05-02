@@ -1,62 +1,71 @@
-// gulpfile.js
+// Gulpfile.js
 const { src, dest } = require("gulp");
+const sharp = require("sharp");
 const sharpResponsive = require("gulp-sharp-responsive");
 var rename = require('gulp-rename');
+var fs = require('fs');
+function defaultTask(done) {
+	done();
+  }
 
-const png = () => src("images/*.png")
-.pipe(sharpResponsive({
-	formats: [
-	// png
-	//{ width: 320, format: "png", rename: { suffix: "-xs" } },
-	{ width: 375, format: "png", rename: { suffix: "-sm" } },
-	{ width: 768, format: "png", rename: { suffix: "-md" } },
-	{ width: 1024, format: "png", rename: { suffix: "-lg" } },
-	{ width: 1500, format: "png", rename: { suffix: "-xl" } },
-	// { width: 1920, format: "png", rename: { suffix: "-2xl" } },
-	// webp
-	//{ width: 320, format: "webp", rename: { suffix: "-xs" } },
-	{ width: 375, format: "webp", rename: { suffix: "-sm" } },
-	{ width: 768, format: "webp", rename: { suffix: "-md" } },
-	{ width: 1024, format: "webp", rename: { suffix: "-lg" } },
-	{ width: 1500, format: "webp", rename: { suffix: "-xl" } },
-	//{ width: 1920, format: "webp", rename: { suffix: "-2xl" } },
-	]
-}))
-.pipe(dest("processed/images/"));
+  async function getMaxWidth(filePath) {
+	const metadata = await sharp(filePath).metadata();
+	return metadata.width;
+  }
 
-const webp = () => src("images/*.{jpg,jpeg}")
-  .pipe(sharpResponsive({
-    formats: [
-    // webp
-	  //{ width: 320, format: "webp", rename: { suffix: "-xs" } },
-	  { width: 375, format: "webp", rename: { suffix: "-sm" } },
-	  { width: 768, format: "webp", rename: { suffix: "-md" } },
-	  { width: 1024, format: "webp", rename: { suffix: "-lg" } },
-	  { width: 1500, format: "webp", rename: { suffix: "-xl" } },
-	  //{ width: 2500, format: "webp", rename: { suffix: "-2xl" } },
-    ]
-  }))
-  .pipe(dest("processed/images/"));
-
-const img = () => src("images/*.{jpg,jpeg}")
-  .pipe(sharpResponsive({
-    formats: [
-    // jpeg
-	  //{ width: 320, format: "jpeg", rename: { suffix: "-xs" } },
-	  { width: 375, format: "jpeg", rename: { suffix: "-sm" } },
-	  { width: 768, format: "jpeg", rename: { suffix: "-md" } },
-	  { width: 1024, format: "jpeg", rename: { suffix: "-lg" } },
-	  { width: 1500, format: "jpeg", rename: { suffix: "-xl" } },
-	  //{ width: 2500, format: "jpeg", rename: { suffix: "-2xl" } },
-    ]
-  }))
-	.pipe(rename({ extname: '.jpg' }))
-  .pipe(dest("processed/images/"));
-	webp();
-	png();
+  function responsiveImages(format) {
+	return (width) => [
+	  { width: Math.min(320, width), format, rename: { suffix: `-xs` } },
+	  { width: Math.min(375, width), format, rename: { suffix: `-sm` } },
+	  { width: Math.min(768, width), format, rename: { suffix: `-md` } },
+	  { width: Math.min(1024, width), format, rename: { suffix: `-lg` } },
+	  { width: Math.min(1500, width), format, rename: { suffix: `-xl` } },
+	  { width: Math.min(2000, width), format, rename: { suffix: `-2xl` } },
+	];
+  }
+  
+  
+  const processImages = async () => {
+	const imageFiles = await fs.promises.readdir("images");
+	imageFiles.forEach(async (file) => {
+	  const fullPath = `images/${file}`;
+  
+	  // Check if the file has a supported extension
+	  if (!file.match(/\.(png|jpg|jpeg)$/i)) {
+		console.log(`Skipping unsupported file format: ${file}`);
+		return;
+	  }
+  
+	  const maxWidth = await getMaxWidth(fullPath);
+  
+	  if (file.endsWith(".png")) {
+		src(fullPath)
+		  .pipe(
+			sharpResponsive({
+			  formats: [
+				...responsiveImages("png")(maxWidth),
+				...responsiveImages("webp")(maxWidth),
+			  ],
+			})
+		  )
+		  .pipe(dest("public/images/"));
+	  } else if (file.endsWith(".jpg") || file.endsWith(".jpeg")) {
+		src(fullPath)
+		  .pipe(
+			sharpResponsive({
+			  formats: [
+				...responsiveImages("jpeg")(maxWidth),
+				...responsiveImages("webp")(maxWidth),
+			  ],
+			})
+		  )
+		  .pipe(rename({ extname: ".jpg" }))
+		  .pipe(dest("public/images/"));
+	  }
+	});
+  };
 
 module.exports = {
-  img,
-	png,
-	webp,
-};    
+  default: defaultTask,
+  img: processImages,
+};
