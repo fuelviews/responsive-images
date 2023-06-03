@@ -16,3 +16,11 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# CUSTOM
+*.code-workspace
+**/.DS_Store
+/.DS_Store
+.DS_Store
+/.dccache
+.dccache
