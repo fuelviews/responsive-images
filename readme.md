@@ -1,7 +1,11 @@
-yarn install
+# Generate xs to 2xl responsive images for php jelly
 
-put images in images folder
+## Installation
 
-put favicon in favicon folder
+`yarn install`
 
-process images with: yarn images
+## Getting Started
+
+- place images in images folder
+- place favicon in favicon folder
+- process images/favicon with the  `yarn images` command
