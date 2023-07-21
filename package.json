@@ -3,8 +3,7 @@
   "version": "0.0.3",
   "description": "Image processing",
   "scripts": {
-    "images": "yarn gulp img",
-    "favicon": "npx favicons-compiled-cli -i ./images/favicon/favicon.png -c favicon.config.js -o processed/favicon/"
+    "images": "yarn gulp img"
   },
   "repository": {
     "type": "git",

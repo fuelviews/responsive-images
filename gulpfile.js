@@ -59,7 +59,6 @@ function defaultTask(done) {
 			  ],
 			})
 		  )
-		  .pipe(rename({ extname: ".jpg" }))
 		  .pipe(dest("public/images/"));
 	  }
 	});
