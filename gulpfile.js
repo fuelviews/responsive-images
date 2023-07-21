@@ -2,7 +2,6 @@
 const { src, dest } = require("gulp");
 const sharp = require("sharp");
 const sharpResponsive = require("gulp-sharp-responsive");
-var rename = require('gulp-rename');
 var fs = require('fs');
 function defaultTask(done) {
 	done();

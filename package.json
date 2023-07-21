@@ -1,23 +1,21 @@
 {
-  "name": "image-processing",
-  "version": "0.0.3",
-  "description": "Image processing",
+  "name": "responsiveimages",
+  "version": "0.0.4",
+  "description": "Responsive image processing",
   "scripts": {
     "images": "yarn gulp img"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fuelviews/image-processing.git"
+    "url": "git+https://github.com/fuelviews/responsiveimages.git"
   },
   "author": "@SkyJebus",
   "license": "MIT",
-  "homepage": "https://github.com/fuelviews/imageprocessing#readme",
+  "homepage": "https://github.com/fuelviews/responsiveimages#readme",
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-rename": "^2.0.0",
     "gulp-sharp-responsive": "^0.3.0",
     "gulp-string-replace": "^1.1.2",
-    "sharp": "^0.30.0",
-    "yarn-audit-fix": "^9.0.10"
+    "sharp": "^0.30.0"
   }
 }
