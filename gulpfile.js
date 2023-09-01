@@ -23,11 +23,19 @@ function defaultTask(done) {
 	];
   }
   
-  
   const processImages = async () => {
 	const imageFiles = await fs.promises.readdir("images");
 	imageFiles.forEach(async (file) => {
-	  const fullPath = `images/${file}`;
+	  let fullPath = `images/${file}`;
+
+		// Rename .jpeg to .jpg before processing
+		if (file.endsWith(".jpeg")) {
+		const newFileName = file.replace('.jpeg', '.jpg');
+		const newPath = `images/${newFileName}`;
+		await fs.promises.rename(fullPath, newPath);
+		console.log(`Renamed ${file} to ${newFileName}`);
+		fullPath = newPath;  // Update fullPath for further processing
+		}
   
 	  // Check if the file has a supported extension
 	  if (!file.match(/\.(png|jpg|jpeg)$/i)) {
