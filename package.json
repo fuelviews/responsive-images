@@ -14,8 +14,8 @@
   "homepage": "https://github.com/fuelviews/responsiveimages#readme",
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-sharp-responsive": "^0.3.0",
-    "gulp-string-replace": "^1.1.2",
-    "sharp": "^0.30.0"
+    "sharp": "^0.32.6",
+    "stream": "^0.0.2",
+    "util": "^0.12.5"
   }
 }
