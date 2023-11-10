@@ -1,4 +1,4 @@
-# Generate xs to 2xl responsive images for php jelly
+# Generate xs to 2xl sized responsive images
 
 -------------------
 
