@@ -1,6 +1,11 @@
 name: Dependabot auto pr merge
 
-on: pull_request
+on:
+  push:
+  pull_request:
+    types: [ opened ]
+    branches:
+      - main
 
 jobs:
   dependabot:
