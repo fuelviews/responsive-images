@@ -1,11 +1,29 @@
 # Generate xs to 2xl responsive images for php jelly
 
+-------------------
+
+## Requirements
+
+- node@18 lts 
+- `nvm install 18`
+- `nvm use 18`
+
+-------------------
+
+- node@20 lts
+- `nvm install --lts`
+- `nvm use --lts`
+
+-------------------
+
 ## Installation
 
 `yarn install`
 
+-------------------
+
 ## Getting Started
 
-- place images in images folder
-- place favicon in favicon folder
-- process images/favicon with the  `yarn images` command
+1. place images in images folder
+2. ~~place favicon in favicon folder (DEPRECATED)~~
+3. process images/favicon with the  `yarn images` command
