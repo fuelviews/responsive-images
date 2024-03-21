@@ -18,7 +18,7 @@
 
 ## Installation
 
-`yarn install`
+`npm install`
 
 -------------------
 
@@ -26,5 +26,5 @@
 
 1. place images in images folder
 2. ~~place favicon in favicon folder (DEPRECATED)~~
-3. process images/favicon with the  `yarn images` command
+3. process images/favicon with the  `npm run images` command
 4. copy images from public/images into your project's image folder

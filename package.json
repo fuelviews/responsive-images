@@ -1,15 +1,15 @@
 {
   "name": "responsiveimages",
-  "version": "0.0.4",
+  "version": "0.0.3",
   "description": "Responsive image processing",
   "scripts": {
-    "images": "yarn gulp img"
+    "images": "gulp img"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fuelviews/responsiveimages.git"
   },
-  "author": "@SkyJebus",
+  "author": "@thejmitchener",
   "license": "MIT",
   "homepage": "https://github.com/fuelviews/responsiveimages#readme",
   "devDependencies": {
