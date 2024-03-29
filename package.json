@@ -1,17 +1,17 @@
 {
   "name": "responsiveimages",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "description": "Responsive image processing",
   "scripts": {
     "images": "gulp img"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fuelviews/responsiveimages.git"
+    "url": "git+https://github.com/Bimbalacom/responsiveimages.git"
   },
   "author": "@thejmitchener",
   "license": "MIT",
-  "homepage": "https://github.com/fuelviews/responsiveimages#readme",
+  "homepage": "https://github.com/Bimbalacom/responsiveimages#readme",
   "devDependencies": {
     "gulp": "^4.0.2",
     "sharp": "^0.33.2",
