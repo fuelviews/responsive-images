@@ -1,30 +1,24 @@
-# Generate xs to 2xl sized responsive images
-
--------------------
-
-## Requirements
-
-- node@18 lts 
-- `nvm install 18`
-- `nvm use 18`
-
--------------------
-
-- node@20 lts
-- `nvm install --lts`
-- `nvm use --lts`
-
--------------------
+# Summary
+ 🔥 This library enables you to generate `xs` to `2xl` sized responsive images
 
 ## Installation
 
-`npm install`
+1. Clone the project
+2. Run
+
+```bash
+npm install
+```
 
 -------------------
 
 ## Getting Started
 
-1. place images in images folder
-2. ~~place favicon in favicon folder (DEPRECATED)~~
-3. process images/favicon with the  `npm run images` command
-4. copy images from public/images into your project's image folder
+1. Place the images in the `images` folder
+2. Run
+
+```bash
+npm run images
+```
+
+3. Grab the images from `public/images`
