@@ -1,13 +1,25 @@
 const archiver = require('archiver');
 const sharp = require('sharp');
-const {fileTypeFromBuffer} = require('file-type');
+const mimetics = require('mimetics')
+const {parseMultipartForm} = require('./processMultipartForm.js');
 
 exports.handler = async (event) => {
     try {
-        const file = event.body; // Assuming the image file is sent in the request body
-
+        const file = await parseMultipartForm(event); // Assuming the image file is sent in the request body
         // Process the image
-        const processedImages = await processImage(file);
+        if(!('image' in file)){
+            return {
+                statusCode: 422,
+                body: JSON.stringify({
+                    data: {
+                        errors: {
+                            image: "The property is missing."
+                        }
+                    }
+                })
+            }
+        }
+        const processedImages = await processImage(file.image);
 
         // Create a zip file containing the processed images
         const zipData = await createZip(processedImages);
@@ -51,34 +63,32 @@ function responsiveImages(width, originalFormat) {
 
 async function processImage(file) {
     // Check if the file has a supported extension
-    const fileExtension = fileTypeFromBuffer(file).ext;
-    if (!fileExtension.match(/\.(png|jpg|jpeg)$/i)) {
+    const fileExtension = mimetics(file.content).ext;
+    if (fileExtension.match(/^(png|jpg|jpeg)$/i) === null) {
         throw Error(`Skipping unsupported file format: ${fileExtension}`);
     }
-
-    const maxWidth = await getMaxWidth(file);
-    const originalFormat = fileExtension.endsWith('.png') ? 'png' : 'jpeg';
+    
+    const maxWidth = await getMaxWidth(file.content);
+    const originalFormat = fileExtension === "png" ? 'png' : 'jpeg';
     const sizes = responsiveImages(maxWidth, originalFormat);
     let outputData = {};
 
     for (const size of sizes) {
         // Correctly handle file naming for different formats
         let outputFileName;
-        const suffix = size.format === originalFormat ? size.rename.suffix : size.rename.suffix + '.' + size.format;
+        const suffix = size.format.endsWith(originalFormat) ? size.rename.suffix : size.rename.suffix + '.' + size.format;
 
-        if (size.format === originalFormat) {
-            outputFileName = fileExtension.replace(/(\.jpeg|\.jpg|\.png)$/i, suffix) + '.' + originalFormat;
+        if (size.format.endsWith(originalFormat)) {
+            outputFileName = file.filename.replace(/(\.jpeg|\.jpg|\.png)$/i, suffix) + '.' + originalFormat;
         } else {
-            outputFileName = fileExtension.replace(/(\.jpeg|\.jpg|\.png)$/i, '') + suffix;
+            outputFileName = file.filename.replace(/(\.jpeg|\.jpg|\.png)$/i, '') + suffix;
         }
         if(outputFileName.endsWith('.jpeg')){
             outputFileName = outputFileName.replace('.jpeg', '.jpg');
         }
 
-        const resizedFile = await sharp(file).resize({ width: size.width }).toFormat(size.format).toBuffer();
+        const resizedFile = await sharp(file.content).resize({ width: size.width }).toFormat(size.format).toBuffer();
         outputData[outputFileName] = resizedFile;
-
-        console.log(`Processed ${outputFileName}`);
     }
     
 
@@ -107,9 +117,9 @@ async function createZip(processedImages) {
         });
 
         // Add each processed image to the zip file
-        processedImages.forEach((data, fileName) => {
-            archive.append(data, { name: fileName }); // Example naming convention
-        });
+        for (const fileName in processedImages) {
+            archive.append(processedImages[fileName], { name: fileName });
+        };
 
         archive.finalize();
     });
