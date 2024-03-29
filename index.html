@@ -26,7 +26,7 @@
             formData.append('image', file);
 
             try {
-                const response = await fetch('/process', {
+                const response = await fetch('/.netlify/functions/process', {
                     method: 'POST',
                     body: formData
                 });
