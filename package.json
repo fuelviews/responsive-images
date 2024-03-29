@@ -2,6 +2,7 @@
   "name": "responsiveimages",
   "version": "0.0.1",
   "description": "Responsive image processing",
+  "type": "commonjs",
   "scripts": {
     "images": "node main.js"
   },
@@ -19,6 +20,8 @@
   },
   "dependencies": {
     "archiver": "^7.0.1",
-    "file-type": "^19.0.0"
+    "busboy": "^1.6.0",
+    "file-type": "^19.0.0",
+    "mimetics": "^0.0.8"
   }
 }
