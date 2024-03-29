@@ -1,12 +1,8 @@
-const { src, dest } = require("gulp");
 const sharp = require("sharp");
 var fs = require('fs');
 const { promisify } = require('util');
 const pipeline = promisify(require('stream').pipeline);
 
-function defaultTask(done) {
-	done();
-}
 
 async function getMaxWidth(filePath) {
 	const metadata = await sharp(filePath).metadata();
@@ -83,7 +79,4 @@ async function processImages() {
 	}
 }
 
-module.exports = {
-	default: defaultTask,
-	img: processImages,
-};
+processImages();

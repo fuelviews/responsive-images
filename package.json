@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Responsive image processing",
   "scripts": {
-    "images": "gulp img"
+    "images": "node main.js"
   },
   "repository": {
     "type": "git",
@@ -13,7 +13,6 @@
   "license": "MIT",
   "homepage": "https://github.com/Bimbalacom/responsiveimages#readme",
   "devDependencies": {
-    "gulp": "^4.0.2",
     "sharp": "^0.33.2",
     "stream": "^0.0.2",
     "util": "^0.12.5"
