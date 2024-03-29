@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processor</title>
+</head>
+
+<body>
+    <input type="file" id="fileInput">
+    <button onclick="processImages()">Process Images</button>
+
+    <script>
+        async function processImages() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+
+            if (files.length === 0) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            const file = files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to process images');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'processed_images.zip';
+                link.click();
+
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error processing images:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

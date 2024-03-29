@@ -1,3 +1,7 @@
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/80b8def5-87f5-4453-806a-57d9ee1c3d30/deploy-status)](https://app.netlify.com/sites/bimbala-responsive-images/deploys)
+
+
 # Summary
  🔥 This library enables you to generate `xs` to `2xl` sized responsive images
 

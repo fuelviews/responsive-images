@@ -13,8 +13,12 @@
   "license": "MIT",
   "homepage": "https://github.com/Bimbalacom/responsiveimages#readme",
   "devDependencies": {
-    "sharp": "^0.33.2",
+    "sharp": "^0.33.3",
     "stream": "^0.0.2",
     "util": "^0.12.5"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "file-type": "^19.0.0"
   }
 }
