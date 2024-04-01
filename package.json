@@ -13,7 +13,7 @@
   "license": "MIT",
   "homepage": "https://github.com/fuelviews/responsiveimages#readme",
   "devDependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "sharp": "^0.33.2",
     "stream": "^0.0.2",
     "util": "^0.12.5"
