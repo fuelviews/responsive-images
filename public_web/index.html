@@ -36,14 +36,14 @@
                     return blobUrl;
                 },
                 addFile(e) {
-                    file = e.target.files[0];
+                    let file = e.target.files[0];
                     if(!this.validate(file)){
                         return;
                     }
                     this.file = file
                 },
                 validate(file) {
-                    if(!file.type.includes('image/')){
+                    if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
                         alert("The file must be PNG, JPG or JPEG!");
                         return false;
                     }
@@ -102,7 +102,7 @@
                     <span class="block text-sm font-medium leading-6 text-gray-900">Source image</span>
                     <div x-ref="dnd"
                         class="relative flex flex-col text-gray-400 border border-gray-300 border-dashed rounded cursor-pointer">
-                        <input accept="*" type="file" multiple
+                        <input accept="image/png, image/jpeg, image/jpg" type="file"
                             class="absolute inset-0 z-50 w-full h-full p-0 m-0 outline-none opacity-0 cursor-pointer"
                             @change="addFile($event)"
                             @dragover="$refs.dnd.classList.add('border-blue-400'); $refs.dnd.classList.add('ring-4'); $refs.dnd.classList.add('ring-inset');"
