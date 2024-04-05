@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processor</title>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="./output.css" rel="stylesheet"><script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script>
+        function dataFileDnD() {
+            return {
+                file: null,
+                processing: false,
+                humanFileSize(size) {
+                    const i = Math.floor(Math.log(size) / Math.log(1024));
+                    return (
+                        (size / Math.pow(1024, i)).toFixed(2) * 1 +
+                        " " +
+                        ["B", "kB", "MB", "GB", "TB"][i]
+                    );
+                },
+                remove() {
+                    this.file = null;
+                },
+                loadFile(file) {
+                    const preview = document.querySelectorAll(".preview");
+                    const blobUrl = URL.createObjectURL(file);
+
+                    preview.forEach(elem => {
+                        elem.onload = () => {
+                            URL.revokeObjectURL(elem.src); // free memory
+                        };
+                    });
+
+                    return blobUrl;
+                },
+                addFile(e) {
+                    file = e.target.files[0];
+                    if(!this.validate(file)){
+                        return;
+                    }
+                    this.file = file
+                },
+                validate(file) {
+                    if(!file.type.includes('image/')){
+                        alert("The file must be PNG, JPG or JPEG!");
+                        return false;
+                    }
+                    if (file.size > Math.pow(1024, 2) * 10) {
+                        alert("The file must be smaller than 10MB!");
+                        return false;
+                    }
+                    return true;
+                },
+                async processImages(e) {
+                    if (this.file === null) {
+                        alert('Please select an image file.');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('image', this.file);
+                    this.processing = true;
+                    try {
+                        const response = await fetch('/.netlify/functions/process', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to process images');
+                        }
+
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'processed_images.zip';
+                        link.click();
+
+                        window.URL.revokeObjectURL(url);
+                        this.file = null;
+                    } catch (error) {
+                        console.error('Error processing images:', error);
+                    } finally {
+                        this.processing = false;
+                    }
+                    return false;
+                }
+            };
+        }
+    </script>
+    
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen" x-data="dataFileDnD()">
+    <form @submit.prevent="processImages(event)" class="w-1/2">
+        <div class="space-y-12">
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="col-span-full" x-ref="dnd">
+                    <span class="block text-sm font-medium leading-6 text-gray-900">Source image</span>
+                    <div x-ref="dnd"
+                        class="relative flex flex-col text-gray-400 border border-gray-300 border-dashed rounded cursor-pointer">
+                        <input accept="*" type="file" multiple
+                            class="absolute inset-0 z-50 w-full h-full p-0 m-0 outline-none opacity-0 cursor-pointer"
+                            @change="addFile($event)"
+                            @dragover="$refs.dnd.classList.add('border-blue-400'); $refs.dnd.classList.add('ring-4'); $refs.dnd.classList.add('ring-inset');"
+                            @dragleave="$refs.dnd.classList.remove('border-blue-400'); $refs.dnd.classList.remove('ring-4'); $refs.dnd.classList.remove('ring-inset');"
+                            @drop="$refs.dnd.classList.remove('border-blue-400'); $refs.dnd.classList.remove('ring-4'); $refs.dnd.classList.remove('ring-inset');"
+                            title="" />
+            
+                        <div class="flex flex-col items-center justify-center py-10 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p
+                                class="m-0 relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
+                                Drag your files here or click on this area.</p>
+                            <p class="text-xs leading-5 text-gray-600">PNG, JPG, JPEG up to 10MB</p>
+                        </div>
+                    </div>
+                </div>          
+            </div>
+
+            <template x-if="file !== null">
+                <div>
+                    <div class="mt-4 mb-4 border-b border-gray-900/10"></div>
+                    <div
+                        class="relative flex flex-col items-center overflow-hidden text-center bg-gray-100 border rounded cursor-move select-none h-80">
+                        <button class="absolute top-0 right-0 z-50 p-1 bg-white rounded-bl focus:outline-none" type="button"
+                            @click="remove()">
+                            <svg class="w-4 h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                        <!-- If we support SVG -->
+                        <!-- <template x-if="file.type.includes('application/') || file.type === ''">
+                                                <svg class="absolute w-12 h-12 text-gray-400 transform top-1/2 -translate-y-2/3"
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                </svg>
+                                            </template> -->
+                        <template x-if="file.type.includes('image/')">
+                            <img class="absolute z-0 object-cover border-4 border-white max-h-80 preview" x-bind:src="loadFile(file)" />
+                        </template>
+
+                        <div class="absolute bottom-0 left-0 right-0 flex flex-col p-2 text-xs bg-white bg-opacity-50">
+                            <span class="w-full font-bold text-gray-900 truncate" x-text="file.name">Loading</span>
+                            <span class="text-xs text-gray-900" x-text="humanFileSize(file.size)">...</span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+            <button class="
+                    px-3 py-2
+                    rounded-md 
+                    bg-indigo-600 hover:bg-indigo-500
+                    text-sm font-semibold text-white 
+                    shadow-sm  
+                    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+                    disabled:opacity-50
+                "
+                x-bind:disabled="processing"
+            >
+                <svg x-show="processing" aria-hidden="true" role="status" class="inline mr-3 w-4 h-4 text-white animate-spin" viewBox="0 0 100 101"
+                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                        fill="#E5E7EB"></path>
+                    <path
+                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                        fill="currentColor"></path>
+                </svg>
+                Generate Images
+            </button>
+        </div>
+    </form>
+</body>
+
+</html>
