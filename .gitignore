@@ -29,3 +29,5 @@ yarn-error.log
 **/*.webp
 **/*.gif
 **/*.png
+# Local Netlify folder
+.netlify
